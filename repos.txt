@@ -1,7 +1,3 @@
 # 用户名/仓库名
-freedanfan/learn_python
-freedanfan/learning_matplot
-freedanfan/learn_shell
-freedanfan/learn_git
-freedanfan/hello-word
-freedanfan/learn_matlab
+freedanfan/RSSHub
+freedanfan/hexo-theme-yilia

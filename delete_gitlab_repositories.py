@@ -17,28 +17,48 @@
 from time import sleep
 import requests
 
-headers = {
-    "Accept": "application/vnd.github.v3+json",
-    "Authorization": "token 5a2aa5506c59d7d085e03968faa08406ecc8564f",  # 此处的XXX代表上面的token
-    "X-OAuth-Scopes": "repo"
-}
+def parsing_data(token_key, repos_list):
+    url = "https://api.github.com/repos/{}/{}"
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": "token {}".format(token_key),  # 此处的XXX代表上面的token
+        "X-OAuth-Scopes": "repo"
+    }
+    urls = []
+    for line in repos_list:
+        if line == '' or line[0] == '#':
+            continue
+        try:
+            name, repo = line.strip().split("/")
+        except IOError:
+            print("ERROR: cannot delete repo name:", line)
+            continue
+        urls.append(url.format(name, repo))
 
-with open('./repos.txt', 'r', encoding='utf-8') as f:
-    data = f.readlines()
+    for i in range(len(urls)):
+        print("deleting repository: ", urls[i])
+        ret = requests.delete(url=urls[i], headers=headers)
+        sleep(2)
+        print(ret)
 
-url = "https://api.github.com/repos/{}/{}"
-urls = []
-for line in data:
-    if line == '' or line[0] == '#':
-        continue
-    try:
-        name, repo = line.strip().split("/")
-    except IOError:
-        continue
-    urls.append(url.format(name, repo))
+    return urls
 
-for i in range(len(urls)):
-    print("repository =", urls[i])
-    ret = requests.delete(url=urls[i], headers=headers)
-    sleep(2)
-    print(ret)
+if __name__ == '__main__':
+    # 具有删除权限的 token
+    delete_repo_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    # 文档路径，填写需要删除的库
+    file_path = './repos.txt'
+
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = f.readlines()
+
+    parsing_data(delete_repo_token, data)
+
+    print("finished.")
+
+
+
+
+
+
+
